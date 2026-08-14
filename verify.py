@@ -111,6 +111,24 @@ def main():
         ok &= good
         print(f"[{'PASS' if good else 'FAIL'}] video hash      {vh}")
 
+    # 5. attempt disclosure: the math can be perfect and the host can still have
+    #    spun several times and published only one. That is not a cryptographic
+    #    failure, so it is reported separately rather than folded into PASS/FAIL.
+    att = d.get("attempts")
+    if att and att.get("total"):
+        print()
+        if att["total"] == 1:
+            print("[INFO] attempts        1 (the only draw this host started with this entry list)")
+        else:
+            print(f"[WARN] attempts        {att['total']} draws started with this exact entry list "
+                  f"({att.get('published', 0)} published, {att.get('abandoned', 0)} not published)")
+            for a in att.get("list", []):
+                if not a.get("isThisOne"):
+                    mark = "published" if a.get("published") else "NOT published"
+                    print(f"         - {a.get('code')}  {mark}")
+            print("       Re-running a draw is not proof of cheating, but a host who")
+            print("       discards results is choosing which one you get to see.")
+
     print()
     if ok:
         print(f"ALL CHECKS PASSED. The record at namewheel.org/v/{code} is internally consistent:")

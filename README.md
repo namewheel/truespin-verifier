@@ -14,6 +14,10 @@ This tool checks that record the hard way:
 3. **Winner.** HMAC-SHA-256 of the seed bytes over `entropy | entriesHash`,
    first 8 bytes as a big-endian integer, modulo the ticket count, lands on
    the recorded winner.
+5. **Attempts.** Reports every certified draw the same host started against
+   this exact entry list, including any started and never published. This is
+   printed as INFO or WARN, never as a PASS or FAIL, because re-running a draw
+   is a disclosure question rather than a cryptographic one.
 4. **Video hash.** SHA-256 over the hosted MP4, byte for byte, matches the
    hash in the record. The video really is the untouched original.
 
@@ -33,6 +37,8 @@ a real public draw. Expected output:
 [PASS] winner          index 0 -> Emma
 [PASS] video hash      0616cecf63bd475d62e43f6f02129e46c52afabdd69e85e65b72e3fb2db346b3
 
+[INFO] attempts        1 (the only draw this host started with this entry list)
+
 ALL CHECKS PASSED.
 ```
 
@@ -42,8 +48,9 @@ A full pass proves the draw ran over exactly the listed entries, that the
 winner came from randomness sealed before the spin which neither the host nor
 NameWheel could steer alone, and that the hosted video is unedited. It cannot
 prove the entry list itself was collected fairly, or what a host did off the
-record. The proof page shows how many certified draws the host ran in the same
-24 hours precisely so that selective re-spinning is visible.
+record. The proof page, and this tool, list every certified draw the host started
+against the same entry list, including ones started and never published,
+precisely so that selective re-spinning is visible rather than hidden.
 
 The full byte-level protocol specification lives at
 [namewheel.org/truespin-spec](https://namewheel.org/truespin-spec).

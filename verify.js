@@ -100,6 +100,25 @@ const mark = (good, label, value) =>
     mark(good, 'video hash', vh);
   }
 
+  // Attempt disclosure: the math can be perfect and the host can still have
+  // spun several times and published only one. Reported separately, never
+  // folded into the PASS/FAIL result.
+  const att = d.attempts;
+  if (att && att.total) {
+    console.log();
+    if (att.total === 1) {
+      console.log('[INFO] attempts        1 (the only draw this host started with this entry list)');
+    } else {
+      console.log(`[WARN] attempts        ${att.total} draws started with this exact entry list ` +
+                  `(${att.published || 0} published, ${att.abandoned || 0} not published)`);
+      for (const a of att.list || []) {
+        if (!a.isThisOne) console.log(`         - ${a.code}  ${a.published ? 'published' : 'NOT published'}`);
+      }
+      console.log('       Re-running a draw is not proof of cheating, but a host who');
+      console.log('       discards results is choosing which one you get to see.');
+    }
+  }
+
   console.log();
   if (ok) {
     console.log(`ALL CHECKS PASSED. The record at namewheel.org/v/${code} is internally consistent:`);
